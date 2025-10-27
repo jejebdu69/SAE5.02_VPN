@@ -1,0 +1,21 @@
+---
+- name: Créer les répertoires de certificats
+  ansible.builtin.file:
+    path: "/etc/ssl/ca"
+    state: directory
+    mode: '0755'
+
+- name: Générer la clé privée de l’autorité de certification (CA)
+  ansible.builtin.command: >
+    openssl genrsa -out /etc/ssl/ca/cakey.pem 4096
+  args:
+    creates: /etc/ssl/ca/cakey.pem
+
+- name: Générer le certificat de la CA
+  ansible.builtin.command: >
+    openssl req -x509 -new -nodes -key /etc/ssl/ca/cakey.pem
+    -sha256 -days 3650
+    -out /etc/ssl/ca/cacert.pem
+    -subj "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab/CN=VPN-CA"
+  args:
+    creates: /etc/ssl/ca/cacert.pem

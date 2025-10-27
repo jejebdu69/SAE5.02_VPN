@@ -1,0 +1,25 @@
+---
+- name: Générer la clé privée du serveur VPN
+  ansible.builtin.command: >
+    openssl genrsa -out /etc/ipsec.d/private/serverKey.pem 4096
+  args:
+    creates: /etc/ipsec.d/private/serverKey.pem
+
+- name: Générer la CSR du serveur
+  ansible.builtin.command: >
+    openssl req -new -key /etc/ipsec.d/private/serverKey.pem
+    -out /etc/ipsec.d/reqs/serverReq.csr
+    -subj "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Server/CN=vpn-server"
+  args:
+    creates: /etc/ipsec.d/reqs/serverReq.csr
+
+- name: Signer le certificat serveur avec la CA
+  ansible.builtin.command: >
+    openssl x509 -req -in /etc/ipsec.d/reqs/serverReq.csr
+    -CA /etc/ssl/ca/cacert.pem
+    -CAkey /etc/ssl/ca/cakey.pem
+    -CAcreateserial
+    -out /etc/ipsec.d/certs/serverCert.pem
+    -days 825 -sha256
+  args:
+    creates: /etc/ipsec.d/certs/serverCert.pem

@@ -1,0 +1,32 @@
+---
+- name: Créer le répertoire de configuration StrongSwan
+  ansible.builtin.file:
+    path: /etc/ipsec.d/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Copier le fichier ipsec.conf depuis le template Jinja2
+  ansible.builtin.template:
+    src: ipsec.conf.j2
+    dest: /etc/ipsec.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copier le fichier ipsec.secrets depuis le template Jinja2
+  ansible.builtin.template:
+    src: ipsec.secrets.j2
+    dest: /etc/ipsec.secrets
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Copier la configuration principale StrongSwan
+  ansible.builtin.template:
+    src: strongswan.conf.j2
+    dest: /etc/strongswan.conf
+    owner: root
+    group: root
+    mode: '0644'

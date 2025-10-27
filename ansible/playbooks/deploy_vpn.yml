@@ -1,0 +1,9 @@
+- name: Déploiement complet du serveur VPN StrongSwan
+  hosts: vpn_server
+  become: yes
+  vars:
+    mode_auth: "rsa"
+  roles:
+    - strongswan
+    - openssl
+    - network

@@ -1,0 +1,12 @@
+---
+- name: Activer le routage IP
+  ansible.builtin.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    reload: yes
+
+- name: Configurer la règle NAT pour le réseau VPN
+  ansible.builtin.command: >
+    iptables -t nat -A POSTROUTING -s 10.10.0.0/24 -o eth0 -j MASQUERADE
+  ignore_errors: yes

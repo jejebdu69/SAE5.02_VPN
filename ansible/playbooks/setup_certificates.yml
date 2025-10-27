@@ -1,0 +1,6 @@
+---
+- name: Génération et distribution des certificats VPN
+  hosts: vpn_server
+  become: yes
+  roles:
+    - openssl

@@ -1,0 +1,6 @@
+---
+- name: Activer et démarrer StrongSwan
+  ansible.builtin.service:
+    name: strongswan
+    state: started
+    enabled: yes
