@@ -1,8 +1,0 @@
----
-- name: Vérifier l’état du service StrongSwan
-  ansible.builtin.shell: "ipsec statusall"
-  register: ipsec_status
-
-- name: Afficher l’état du VPN
-  ansible.builtin.debug:
-    var: ipsec_status.stdout

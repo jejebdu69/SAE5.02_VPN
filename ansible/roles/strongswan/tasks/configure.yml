@@ -1,0 +1,24 @@
+---
+- name: Template ipsec.conf
+  template:
+    src: ipsec.conf.j2
+    dest: /etc/ipsec.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Template ipsec.secrets
+  template:
+    src: ipsec.secrets.j2
+    dest: /etc/ipsec.secrets
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: strongswan.conf (logging/plugins)
+  template:
+    src: strongswan.conf.j2
+    dest: /etc/strongswan.conf
+    owner: root
+    group: root
+    mode: '0644'

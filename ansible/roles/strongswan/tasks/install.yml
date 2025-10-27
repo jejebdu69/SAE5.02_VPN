@@ -1,0 +1,37 @@
+---
+- name: Install StrongSwan and deps
+  apt:
+    name:
+      - strongswan
+      - strongswan-pki
+      - libstrongswan-extra-plugins
+      - iproute2
+      - net-tools
+      - ufw
+      - openssl
+    update_cache: yes
+    state: present
+
+- name: Ensure /etc/ipsec.d structure
+  file:
+    path: "/etc/ipsec.d/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - certs
+    - private
+    - cacerts
+    - reqs
+
+- name: Tune sysctl for forwarding
+  copy:
+    src: sysctl.conf
+    dest: /etc/sysctl.d/99-strongswan.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Apply sysctl
+  command: sysctl --system

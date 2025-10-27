@@ -1,0 +1,21 @@
+config setup
+  charondebug="ike 2, knl 2, cfg 2"
+  uniqueids=no
+
+conn %default
+  keyexchange=ikev2
+  ike=aes256-sha256-modp2048
+  esp=aes256-sha256
+  dpdaction=clear
+  dpddelay=300s
+  dpdtimeout=1h
+  rekey=no
+
+conn vpn
+  left=%any
+  leftid=@vpnserver
+  leftcert=serverCert.pem
+  leftsubnet=10.10.0.0/24
+  right=%any
+  rightsourceip=10.10.0.0/24
+  auto=add

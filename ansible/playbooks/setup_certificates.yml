@@ -1,5 +1,5 @@
 ---
-- name: Génération et distribution des certificats VPN
+- name: Génération et distribution des certificats
   hosts: vpn_server
   become: yes
   roles:

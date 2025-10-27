@@ -1,9 +1,10 @@
+---
 - name: Déploiement complet du serveur VPN StrongSwan
   hosts: vpn_server
   become: yes
   vars:
-    mode_auth: "rsa"
+    mode_auth: "{{ mode_auth | default('rsa') }}"
   roles:
-    - strongswan
-    - openssl
-    - network
+    - role: network
+    - role: openssl
+    - role: strongswan

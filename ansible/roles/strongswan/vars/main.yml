@@ -1,0 +1,9 @@
+---
+vpn_subnet: 10.10.0.0/24
+vpn_interface: eth0
+mode_auth: rsa            # rsa | psk | mschapv2
+vpn_leftid: "@vpnserver"
+ike_suite: "aes256-sha256-modp2048"
+esp_suite: "aes256-sha256"
+dpd_delay: "300s"
+dpd_timeout: "1h"

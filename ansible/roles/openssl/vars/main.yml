@@ -1,0 +1,11 @@
+---
+ca_dir: /etc/ssl/ca
+ca_key: "{{ ca_dir }}/cakey.pem"
+ca_crt: "{{ ca_dir }}/cacert.pem"
+server_key: /etc/ipsec.d/private/serverKey.pem
+server_csr: /etc/ipsec.d/reqs/serverReq.csr
+server_crt: /etc/ipsec.d/certs/serverCert.pem
+server_cn: "vpn-server"
+subject_base: "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab"
+days_ca: 3650
+days_srv: 825

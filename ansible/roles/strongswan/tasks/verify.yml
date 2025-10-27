@@ -1,0 +1,7 @@
+---
+- name: Check ipsec status
+  shell: ipsec statusall || true
+  register: ipsec_status
+
+- debug:
+    var: ipsec_status.stdout

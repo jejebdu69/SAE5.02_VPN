@@ -1,0 +1,6 @@
+---
+- name: Configuration réseau (pare-feu + NAT)
+  hosts: vpn_server
+  become: yes
+  roles:
+    - network

@@ -1,0 +1,17 @@
+---
+- name: Enable IPv4 forwarding via sysctl
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    reload: yes
+
+- name: Add MASQUERADE rule for VPN subnet
+  command: iptables -t nat -C POSTROUTING -s {{ vpn_subnet }} -o {{ vpn_interface }} -j MASQUERADE
+  register: has_rule
+  failed_when: false
+  changed_when: has_rule.rc != 0
+
+- name: Ensure MASQUERADE rule present
+  command: iptables -t nat -A POSTROUTING -s {{ vpn_subnet }} -o {{ vpn_interface }} -j MASQUERADE
+  when: has_rule.rc != 0

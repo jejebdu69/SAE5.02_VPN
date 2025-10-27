@@ -1,19 +1,30 @@
 ---
-- name: Réinitialisation de l’environnement VPN
+- name: Nettoyage de l'environnement VPN
   hosts: vpn_server
   become: yes
   tasks:
-    - name: Arrêter le service StrongSwan
-      ansible.builtin.service:
-        name: strongswan
+    - name: Stop StrongSwan
+      service:
+        name: strongswan-starter
         state: stopped
+      ignore_errors: yes
 
-    - name: Supprimer les certificats existants
-      ansible.builtin.file:
-        path: /etc/ipsec.d/
+    - name: Remove ipsec.conf
+      file:
+        path: /etc/ipsec.conf
         state: absent
 
-    - name: Supprimer les logs StrongSwan
-      ansible.builtin.file:
-        path: /var/log/strongswan/
+    - name: Remove ipsec.secrets
+      file:
+        path: /etc/ipsec.secrets
+        state: absent
+
+    - name: Clear ipsec.d
+      file:
+        path: /etc/ipsec.d
+        state: absent
+
+    - name: Clear logs strongswan
+      file:
+        path: /var/log/strongswan
         state: absent

@@ -1,9 +1,0 @@
----
-- name: Ouvrir les ports UDP 500 et 4500 pour IPSec
-  ansible.builtin.ufw:
-    rule: allow
-    port: "{{ item }}"
-    proto: udp
-  loop:
-    - 500
-    - 4500

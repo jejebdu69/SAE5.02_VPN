@@ -1,0 +1,17 @@
+# Ansible
+*.retry
+
+# Certs/keys
+certificates/**/cakey.pem
+certificates/**/serverKey.pem
+certificates/**/client*Key.pem
+*.srl
+
+# Logs
+logs/**
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

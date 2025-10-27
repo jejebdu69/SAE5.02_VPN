@@ -1,0 +1,42 @@
+---
+- name: Ensure ipsec.d paths
+  file:
+    path: "/etc/ipsec.d/{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - private
+    - certs
+    - reqs
+    - cacerts
+
+- name: Copy CA cert to cacerts
+  copy:
+    src: "{{ ca_crt }}"
+    dest: /etc/ipsec.d/cacerts/cacert.pem
+    remote_src: true
+
+- name: Generate server key
+  command: openssl genrsa -out "{{ server_key }}" 4096
+  args: { creates: "{{ server_key }}" }
+
+- name: Render OpenSSL CSR config
+  template:
+    src: openssl.cnf.j2
+    dest: /etc/ipsec.d/reqs/openssl.cnf
+
+- name: Generate server CSR
+  command: >
+    openssl req -new -key "{{ server_key }}"
+    -out "{{ server_csr }}"
+    -config /etc/ipsec.d/reqs/openssl.cnf
+  args: { creates: "{{ server_csr }}" }
+
+- name: Sign server certificate
+  command: >
+    openssl x509 -req -in "{{ server_csr }}"
+    -CA "{{ ca_crt }}" -CAkey "{{ ca_key }}" -CAcreateserial
+    -out "{{ server_crt }}"
+    -days {{ days_srv }} -sha256
+    -extensions v3_req -extfile /etc/ipsec.d/reqs/openssl.cnf
+  args: { creates: "{{ server_crt }}" }
