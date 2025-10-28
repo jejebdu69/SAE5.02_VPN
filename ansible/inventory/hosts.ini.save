@@ -1,7 +1,7 @@
 # INVENTAIRE ANSIBLE - VPN
 
 [vpn_server]
-vpn01 ansible_host=192.168.56.10 ansible_user=vagrant ansible_ssh_private_key_file=~/SAE5.02_VPN/.vagrant/machines/default/virtualbox/private_key
+vpn01 ansible_host=192.168.56.10 ansible_user=vagrant ansible_ssh_private_key_file=
 
 [vpn_server:vars]
 ansible_python_interpreter=/usr/bin/python3

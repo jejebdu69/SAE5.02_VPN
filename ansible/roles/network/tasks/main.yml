@@ -1,0 +1,4 @@
+# ansible/roles/network/tasks/main.yml
+---
+- import_tasks: firewall.yml
+- import_tasks: nat.yml

@@ -1,0 +1,4 @@
+# ansible/roles/openssl/tasks/main.yml
+---
+- import_tasks: generate_ca.yml
+- import_tasks: generate_certificates.yml
