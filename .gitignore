@@ -1,6 +1,9 @@
 # Ansible
 *.retry
 
+#Vagrant
+.vagrant/**
+
 # Certs/keys
 certificates/**/cakey.pem
 certificates/**/serverKey.pem
