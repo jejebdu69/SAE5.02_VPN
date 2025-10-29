@@ -1,0 +1,6 @@
+---
+- name: Déploiement du client VPN StrongSwan
+  hosts: vpn_client
+  become: yes
+  roles:
+    - client

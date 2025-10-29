@@ -1,0 +1,22 @@
+---
+- name: Créer les répertoires nécessaires
+  file:
+    path: "/etc/ipsec.d/{{ item }}"
+    state: directory
+  loop:
+    - private
+    - certs
+    - cacerts
+
+- name: Copier les certificats depuis le contrôleur
+  copy:
+    src: "../../shared_certs/"
+    dest: "/etc/ipsec.d/"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Déployer la configuration du client
+  template:
+    src: "{{ playbook_dir }}/../roles/client/templates/ipsec.conf.j2"
+    dest: /etc/ipsec.conf

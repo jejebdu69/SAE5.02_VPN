@@ -1,0 +1,12 @@
+---
+- name: Redémarrer StrongSwan
+  service:
+    name: strongswan-starter
+    state: restarted
+
+- name: Vérifier la connexion VPN
+  shell: ipsec statusall
+  register: ipsec_status
+
+- debug:
+    var: ipsec_status.stdout
