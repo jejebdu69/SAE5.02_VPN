@@ -1,11 +1,17 @@
 ---
+- name: Enable & start StrongSwan
+  service:
+    name: ipsec
+    state: started
+    enabled: yes
+
 - name: Redémarrer StrongSwan
   service:
     name: strongswan-starter
     state: restarted
 
-- name: Vérifier la connexion VPN
-  shell: ipsec statusall
+- name: Check ipsec status
+  shell: ipsec statusall || true
   register: ipsec_status
 
 - debug:

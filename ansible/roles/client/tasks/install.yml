@@ -1,0 +1,13 @@
+---
+- name: Install StrongSwan and dependencies
+  apt:
+    name:
+      - strongswan
+      - strongswan-pki
+      - libstrongswan-extra-plugins
+      - iproute2
+      - net-tools
+      - ufw
+      - openssl
+    update_cache: yes
+    state: present

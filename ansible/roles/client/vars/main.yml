@@ -1,0 +1,17 @@
+---
+# VPN Server
+vpn_server_ip: 192.168.56.10
+vpn_subnet: 10.10.0.0/24
+
+# VPN cryptography
+ike_suite: aes256-sha2_256-modp2048
+esp_suite: aes256-sha2_256
+dpd_delay: 30s
+dpd_timeout: 120s
+mode_auth: rsa  # rsa | psk | mschapv2
+
+# Client identity
+client_leftid: client01@domain
+psk_secret: "SuperSecretKey123!"        # si mode_auth = psk
+client_username: "client01"             # si mode_auth = mschapv2
+client_password: "password123"          # si mode_auth = mschapv2

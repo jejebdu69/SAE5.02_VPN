@@ -39,7 +39,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     client.vm.provision "shell", inline: <<-SHELL
       sudo apt-get update -y
       sudo apt-get install -y strongswan strongswan-pki openssl vim iputils-ping net-tools
-      sudo systemctl enable strongswan
+      sudo systemctl enable strongswan-starter
     SHELL
   end
 end

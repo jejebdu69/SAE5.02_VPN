@@ -1,3 +1,12 @@
 ---
-- import_tasks: configure.yml
-- import_tasks: connect.yml
+- name: Install required packages
+  import_tasks: install.yml
+
+- name: Ensure directories exist
+  import_tasks: configure.yml
+
+- name: Deploy certificates from VPN server
+  import_tasks: deploy_certificates.yml
+
+- name: Connect Strongswan Client
+  import_tasks: connect.yml

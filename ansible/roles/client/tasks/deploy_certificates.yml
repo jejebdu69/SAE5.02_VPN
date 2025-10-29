@@ -1,0 +1,23 @@
+---
+- name: Récupérer les certificats depuis le serveur VPN
+  fetch:
+    src: "/etc/ipsec.d/{{ item.src }}"
+    dest: "/tmp/certs/{{ item.src }}"
+    flat: yes
+  loop:
+    - { src: "cacerts/cacert.pem" }
+    - { src: "certs/serverCert.pem" }
+    - { src: "private/serverKey.pem" }
+  delegate_to: vpn01
+
+- name: Déployer les certificats sur le client
+  copy:
+    src: "/tmp/certs/{{ item.src }}"
+    dest: "/etc/ipsec.d/{{ item.src }}"
+    owner: root
+    group: root
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - { src: "cacerts/cacert.pem", mode: "0644" }
+    - { src: "certs/serverCert.pem", mode: "0644" }
+    - { src: "private/serverKey.pem", mode: "0600" }
