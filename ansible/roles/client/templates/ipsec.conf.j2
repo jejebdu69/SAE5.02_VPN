@@ -1,4 +1,4 @@
-# /etc/ipsec.conf - client VPN
+# /etc/ipsec.conf - configuration client VPN générée avec Ansible
 
 config setup
     charondebug="ike 2, knl 2, cfg 2, net 1, esp 1"
@@ -19,7 +19,7 @@ conn vpn
     left=%defaultroute
     leftid={{ client_leftid }}
     {% if mode_auth == 'rsa' %}
-    leftcert=serverCert.pem
+    leftcert=clientCert.pem
     leftauth=pubkey
     rightauth=pubkey
     rightca=%same

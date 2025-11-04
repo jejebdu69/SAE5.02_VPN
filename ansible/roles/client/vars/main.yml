@@ -12,6 +12,3 @@ mode_auth: rsa  # rsa | psk | mschapv2
 
 # Client identity
 client_leftid: client01@domain
-psk_secret: "SuperSecretKey123!"        # si mode_auth = psk
-client_username: "client01"             # si mode_auth = mschapv2
-client_password: "password123"          # si mode_auth = mschapv2

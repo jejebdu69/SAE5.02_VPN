@@ -8,6 +8,8 @@
     - { src: "cacerts/cacert.pem" }
     - { src: "certs/serverCert.pem" }
     - { src: "private/serverKey.pem" }
+    - { src: "certs/clientCert.pem" }
+    - { src: "private/clientKey.pem" }
   delegate_to: vpn01
 
 - name: Déployer les certificats sur le client
@@ -21,3 +23,5 @@
     - { src: "cacerts/cacert.pem", mode: "0644" }
     - { src: "certs/serverCert.pem", mode: "0644" }
     - { src: "private/serverKey.pem", mode: "0600" }
+    - { src: "certs/clientCert.pem", mode: "0644" }
+    - { src: "private/clientKey.pem", mode: "0600" }

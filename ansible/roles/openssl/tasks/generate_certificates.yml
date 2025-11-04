@@ -40,3 +40,27 @@
     -days {{ days_srv }} -sha256
     -extensions v3_req -extfile /etc/ipsec.d/reqs/openssl.cnf
   args: { creates: "{{ server_crt }}" }
+
+# --- CLIENT ---
+
+- name: Generate client key
+  command: openssl genrsa -out /etc/ipsec.d/private/clientKey.pem 4096
+  args:
+    creates: /etc/ipsec.d/private/clientKey.pem
+
+- name: Generate client CSR
+  command: >
+    openssl req -new -key /etc/ipsec.d/private/clientKey.pem
+    -out /etc/ipsec.d/reqs/clientReq.csr
+    -subj "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab/CN=vpn-client"
+  args:
+    creates: /etc/ipsec.d/reqs/clientReq.csr
+
+- name: Sign client certificate with CA
+  command: >
+    openssl x509 -req -in /etc/ipsec.d/reqs/clientReq.csr
+    -CA "{{ ca_crt }}" -CAkey "{{ ca_key }}" -CAcreateserial
+    -out /etc/ipsec.d/certs/clientCert.pem
+    -days {{ days_srv }} -sha256
+  args:
+    creates: /etc/ipsec.d/certs/clientCert.pem
