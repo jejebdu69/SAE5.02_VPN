@@ -37,6 +37,7 @@ conn vpn
     rightauth=psk
 {% elif mode_auth == 'mschapv2' %}
     leftauth=eap-mschapv2
-    rightauth=eap-mschapv2
-    eap_identity=%identity
+    rightca={{ ca_cert }}
+    rightauth=pubkey
+    eap_identity="{{ user_login }}"
 {% endif %}
