@@ -1,18 +1,22 @@
 ---
-- name: Create CA dir
+# generate_ca.yml
+- name: Ensure CA directory exists
   file:
     path: "{{ ca_dir }}"
     state: directory
     mode: '0755'
 
-- name: Generate CA key
+- name: Generate CA private key if not exists
   command: openssl genrsa -out "{{ ca_key }}" 4096
-  args: { creates: "{{ ca_key }}" }
+  args:
+    creates: "{{ ca_key }}"
 
-- name: Generate CA cert
+- name: Generate CA certificate if not exists
   command: >
-    openssl req -x509 -new -nodes -key "{{ ca_key }}"
+    openssl req -x509 -new -nodes
+    -key "{{ ca_key }}"
     -sha256 -days {{ days_ca }}
     -out "{{ ca_crt }}"
     -subj "{{ subject_base }}/CN=VPN-CA"
-  args: { creates: "{{ ca_crt }}" }
+  args:
+    creates: "{{ ca_crt }}"

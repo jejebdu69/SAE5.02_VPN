@@ -1,26 +1,11 @@
-# /etc/strongswan.conf - client logging/plugins
+# /etc/strongswan.conf minimal pour client
+# strongswan.conf - strongSwan configuration file
 
 charon {
-    load_modular = yes
-    dns1 1.1.1.1
-    dns2 9.9.9.9
-    filelog {
-        /var/log/strongswan/charon.log {
-            time_format = %b %e %T
-            default = 1
-            flush_line = yes
+        load_modular = yes
+        plugins {
+                include strongswan.d/charon/*.conf
         }
-    }
 }
 
-libstrongswan {
-    plugins {
-        attr = yes
-        eap-mschapv2 = yes
-        eap-ttls = yes
-        x509 = yes
-        pem = yes
-        pkcs1 = yes
-        gmp = yes
-    }
-}
+include strongswan.d/*.conf

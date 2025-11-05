@@ -1,0 +1,33 @@
+---
+# generate_client.yml
+- name: Generate client private key
+  command: openssl genrsa -out "{{ client.key }}" 4096
+  args:
+    creates: "{{ client.key }}"
+
+- name: Render OpenSSL config for client
+  template:
+    src: openssl.cnf.j2
+    dest: "/etc/ipsec.d/reqs/openssl-{{ client.cn }}.cnf"
+  vars:
+    cn_name: "{{ client.cn }}"
+    san_dns: "{{ client.cn }}"
+
+- name: Generate client CSR
+  command: >
+    openssl req -new -key "{{ client.key }}"
+    -out "{{ client.csr }}"
+    -config "/etc/ipsec.d/reqs/openssl-{{ client.cn }}.cnf"
+  args:
+    creates: "{{ client.csr }}"
+
+- name: Sign client certificate
+  command: >
+    openssl x509 -req -in "{{ client.csr }}"
+    -CA "{{ ca_crt }}" -CAkey "{{ ca_key }}" -CAcreateserial
+    -out "{{ client.crt }}"
+    -days {{ days_cli | default(825) }} -sha256
+    -extensions v3_req
+    -extfile "/etc/ipsec.d/reqs/openssl-{{ client.cn }}.cnf"
+  args:
+    creates: "{{ client.crt }}"

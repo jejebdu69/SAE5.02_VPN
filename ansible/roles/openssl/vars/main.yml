@@ -1,11 +1,24 @@
 ---
+# --- Autorité de Certification ---
 ca_dir: /etc/ssl/ca
 ca_key: "{{ ca_dir }}/cakey.pem"
 ca_crt: "{{ ca_dir }}/cacert.pem"
+days_ca: 3650
+
+# --- Serveur ---
 server_key: /etc/ipsec.d/private/serverKey.pem
 server_csr: /etc/ipsec.d/reqs/serverReq.csr
 server_crt: /etc/ipsec.d/certs/serverCert.pem
 server_cn: "vpn-server"
-subject_base: "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab"
-days_ca: 3650
+server_ip: "192.168.56.10"
 days_srv: 825
+
+# --- Clients ---
+clients:
+  - cn: "vpn-client"
+    key: /etc/ipsec.d/private/clientKey.pem
+    csr: /etc/ipsec.d/reqs/clientReq.csr
+    crt: /etc/ipsec.d/certs/clientCert.pem
+
+# --- DN commun ---
+subject_base: "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab"

@@ -2,6 +2,7 @@
 default_bits       = 4096
 distinguished_name = req_distinguished_name
 prompt             = no
+req_extensions     = v3_req
 
 [ req_distinguished_name ]
 C  = FR
@@ -9,7 +10,7 @@ ST = France
 L  = Lyon
 O  = VPNTest
 OU = Lab
-CN = {{ server_cn }}
+CN = {{ cn_name }}
 
 [ v3_req ]
 keyUsage = critical, digitalSignature, keyEncipherment
@@ -17,5 +18,9 @@ extendedKeyUsage = serverAuth, clientAuth
 subjectAltName = @alt_names
 
 [ alt_names ]
-DNS.1 = {{ server_cn }}
-IP.1  = 127.0.0.1
+{% if san_dns is defined %}
+DNS.1 = {{ san_dns }}
+{% endif %}
+{% if san_ip is defined %}
+IP.1  = {{ san_ip }}
+{% endif %}

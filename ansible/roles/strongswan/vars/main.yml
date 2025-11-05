@@ -1,9 +1,22 @@
----
-vpn_subnet: 10.10.0.0/24
+vpn_subnet: 0.0.0.0/0
 vpn_interface: eth0
-mode_auth: rsa            # rsa | psk | mschapv2
-vpn_leftid: "@vpnserver"
-ike_suite: "aes256-sha256-modp2048"
-esp_suite: "aes256-sha256"
-dpd_delay: "300s"
-dpd_timeout: "1h"
+mode_auth: rsa           # rsa | psk | mschapv2
+
+vpn_leftid: vpn-server
+rightid: vpn-client
+
+ike_suite: aes256-sha256-modp2048
+esp_suite: aes256-sha256
+dpd_delay: 30s
+dpd_timeout: 120s
+
+# Certificats RSA
+server_cert: /etc/ipsec.d/certs/serverCert.pem
+server_key: /etc/ipsec.d/private/serverKey.pem
+ca_cert: /etc/ipsec.d/cacerts/cacert.pem
+
+# PSK / mschapv2
+vpn_psk: "MonSuperPSK"
+users:
+  - username: "user1"
+    password: "password1"

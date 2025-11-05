@@ -1,37 +1,44 @@
-# /etc/ipsec.conf - generated
+# /etc/ipsec.conf - serveur
 config setup
     charondebug="ike 2, knl 2, cfg 2, net 1, esp 1"
     uniqueids=no
 
-conn %default
+conn vpn
     keyexchange=ikev2
+    left=%any
+
+{% if mode_auth == 'rsa' %}
+    # Identité du serveur = SAN (vpn-server)
+    leftid={{ vpn_leftid | default('vpn-server') }}
+{% else %}
+    leftid=%identity
+{% endif %}
+
+    leftsubnet={{ vpn_subnet }}
     ike={{ ike_suite }}
     esp={{ esp_suite }}
-    dpdaction=clear
     dpddelay={{ dpd_delay }}
     dpdtimeout={{ dpd_timeout }}
-    rekey=no
-    fragmentation=yes
-    forceencaps=yes
-
-conn vpn
-    left=%any
-    leftid={{ vpn_leftid }}
-    leftsubnet={{ vpn_subnet }}
-    right=%any
-    rightsourceip={{ vpn_subnet }}
     auto=add
 
 {% if mode_auth == 'rsa' %}
-    leftcert=serverCert.pem
+    leftcert={{ server_cert }}
+    leftsendcert=always
     leftauth=pubkey
+
+    right=%any
     rightauth=pubkey
-    rightca=%same
+    rightca={{ ca_cert }}
+    rightid={{ rightid | default('vpn-client') }}
+
 {% elif mode_auth == 'psk' %}
     leftauth=psk
+    right=%any
     rightauth=psk
+
 {% elif mode_auth == 'mschapv2' %}
     leftauth=eap-mschapv2
+    right=%any
     rightauth=eap-mschapv2
     eap_identity=%identity
 {% endif %}

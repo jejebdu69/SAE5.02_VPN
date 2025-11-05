@@ -1,18 +1,31 @@
----
-- name: Enable & start StrongSwan
+- name: Stop IPSec StrongSwan service
+  service:
+    name: ipsec
+    state: stopped
+    enabled: no
+
+- name: Stop StrongSwan starter service
+  service:
+    name: strongswan-starter
+    state: stopped
+    enabled: no
+
+- name: Start and enable StrongSwan starter service
+  service:
+    name: strongswan-starter
+    state: started
+    enabled: yes
+
+- name: Start and enable IPSec service
   service:
     name: ipsec
     state: started
     enabled: yes
 
-- name: Redémarrer StrongSwan
-  service:
-    name: strongswan-starter
-    state: restarted
-
-- name: Check ipsec status
+- name: Check IPSec status
   shell: ipsec statusall || true
   register: ipsec_status
 
-- debug:
+- name: Display IPSec status
+  debug:
     var: ipsec_status.stdout

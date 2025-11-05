@@ -1,5 +1,8 @@
 ---
-- name: Ensure ipsec.d paths
+# generate_certificates.yml
+
+# --- Préparer les dossiers ipsec.d ---
+- name: Ensure ipsec.d directories exist
   file:
     path: "/etc/ipsec.d/{{ item }}"
     state: directory
@@ -10,27 +13,35 @@
     - reqs
     - cacerts
 
-- name: Copy CA cert to cacerts
+# --- Copier le certificat CA ---
+- name: Copy CA certificate to /etc/ipsec.d/cacerts
   copy:
     src: "{{ ca_crt }}"
     dest: /etc/ipsec.d/cacerts/cacert.pem
     remote_src: true
 
-- name: Generate server key
+# --- Génération du certificat serveur ---
+- name: Generate server private key
   command: openssl genrsa -out "{{ server_key }}" 4096
-  args: { creates: "{{ server_key }}" }
+  args:
+    creates: "{{ server_key }}"
 
-- name: Render OpenSSL CSR config
+- name: Render OpenSSL config for server
   template:
     src: openssl.cnf.j2
-    dest: /etc/ipsec.d/reqs/openssl.cnf
+    dest: /etc/ipsec.d/reqs/openssl-server.cnf
+  vars:
+    cn_name: "{{ server_cn }}"
+    san_dns: "{{ server_cn }}"
+    san_ip: "{{ server_ip | default('127.0.0.1') }}"
 
 - name: Generate server CSR
   command: >
     openssl req -new -key "{{ server_key }}"
     -out "{{ server_csr }}"
-    -config /etc/ipsec.d/reqs/openssl.cnf
-  args: { creates: "{{ server_csr }}" }
+    -config /etc/ipsec.d/reqs/openssl-server.cnf
+  args:
+    creates: "{{ server_csr }}"
 
 - name: Sign server certificate
   command: >
@@ -38,29 +49,14 @@
     -CA "{{ ca_crt }}" -CAkey "{{ ca_key }}" -CAcreateserial
     -out "{{ server_crt }}"
     -days {{ days_srv }} -sha256
-    -extensions v3_req -extfile /etc/ipsec.d/reqs/openssl.cnf
-  args: { creates: "{{ server_crt }}" }
-
-# --- CLIENT ---
-
-- name: Generate client key
-  command: openssl genrsa -out /etc/ipsec.d/private/clientKey.pem 4096
+    -extensions v3_req
+    -extfile /etc/ipsec.d/reqs/openssl-server.cnf
   args:
-    creates: /etc/ipsec.d/private/clientKey.pem
+    creates: "{{ server_crt }}"
 
-- name: Generate client CSR
-  command: >
-    openssl req -new -key /etc/ipsec.d/private/clientKey.pem
-    -out /etc/ipsec.d/reqs/clientReq.csr
-    -subj "/C=FR/ST=France/L=Lyon/O=VPNTest/OU=Lab/CN=vpn-client"
-  args:
-    creates: /etc/ipsec.d/reqs/clientReq.csr
-
-- name: Sign client certificate with CA
-  command: >
-    openssl x509 -req -in /etc/ipsec.d/reqs/clientReq.csr
-    -CA "{{ ca_crt }}" -CAkey "{{ ca_key }}" -CAcreateserial
-    -out /etc/ipsec.d/certs/clientCert.pem
-    -days {{ days_srv }} -sha256
-  args:
-    creates: /etc/ipsec.d/certs/clientCert.pem
+# --- Génération des certificats clients ---
+- name: Generate client certificates
+  include_tasks: generate_client.yml
+  loop: "{{ clients }}"
+  loop_control:
+    loop_var: client

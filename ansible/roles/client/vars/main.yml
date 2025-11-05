@@ -1,14 +1,20 @@
----
-# VPN Server
 vpn_server_ip: 192.168.56.10
 vpn_subnet: 10.10.0.0/24
+mode_auth: rsa           # rsa | psk | mschapv2
 
-# VPN cryptography
-ike_suite: aes256-sha2_256-modp2048
-esp_suite: aes256-sha2_256
+client_leftid: vpn-client
+vpn_leftid: vpn-server
+
+ike_suite: aes256-sha256-modp2048
+esp_suite: aes256-sha256
 dpd_delay: 30s
 dpd_timeout: 120s
-mode_auth: rsa  # rsa | psk | mschapv2
 
-# Client identity
-client_leftid: client01@domain
+# Certificats RSA
+client_cert: /etc/ipsec.d/certs/clientCert.pem
+client_key: /etc/ipsec.d/private/clientKey.pem
+ca_cert: /etc/ipsec.d/cacerts/cacert.pem
+
+# PSK / mschapv2
+vpn_psk: "MonSuperPSK"
+user_password: "password1"

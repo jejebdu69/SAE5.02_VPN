@@ -1,36 +1,42 @@
-# /etc/ipsec.conf - configuration client VPN générée avec Ansible
-
+# /etc/ipsec.conf - client
 config setup
     charondebug="ike 2, knl 2, cfg 2, net 1, esp 1"
     uniqueids=no
 
-conn %default
+conn vpn
     keyexchange=ikev2
+    left=%defaultroute
+
+{% if mode_auth == 'rsa' %}
+    # Identité basée sur le SAN du certificat (plus fiable que CN)
+    leftid={{ client_leftid | default('vpn-client') }}
+{% else %}
+    leftid=%identity
+{% endif %}
+
     ike={{ ike_suite }}
     esp={{ esp_suite }}
-    dpdaction=clear
     dpddelay={{ dpd_delay }}
     dpdtimeout={{ dpd_timeout }}
-    rekey=no
-    fragmentation=yes
-    forceencaps=yes
+    auto=add
+    right={{ vpn_server_ip }}
 
-conn vpn
-    left=%defaultroute
-    leftid={{ client_leftid }}
-    {% if mode_auth == 'rsa' %}
-    leftcert=clientCert.pem
+{% if mode_auth == 'rsa' %}
+    rightid={{ vpn_leftid | default('vpn-server') }}
+{% else %}
+    rightid=%any
+{% endif %}
+
+{% if mode_auth == 'rsa' %}
+    leftcert={{ client_cert }}
     leftauth=pubkey
     rightauth=pubkey
-    rightca=%same
-    {% elif mode_auth == 'psk' %}
+    rightca={{ ca_cert }}
+{% elif mode_auth == 'psk' %}
     leftauth=psk
     rightauth=psk
-    {% elif mode_auth == 'mschapv2' %}
+{% elif mode_auth == 'mschapv2' %}
     leftauth=eap-mschapv2
     rightauth=eap-mschapv2
     eap_identity=%identity
-    {% endif %}
-    right={{ vpn_server_ip }}
-    rightsubnet={{ vpn_subnet }}
-    auto=add
+{% endif %}
