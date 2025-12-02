@@ -11,6 +11,12 @@ echo "💻 Déploiement du client VPN..."
 ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_client.yml
 
 echo "✅ VPN opérationnel !"
-echo "🔗 Pour tester :"
+echo "--------------------------------------------------------"
+echo "🔗 Pour vous connecter sur le client :"
 echo "  vagrant ssh client01"
-echo "  sudo ipsec statusall"
+echo "  sudo ipsec up vpn"
+echo "--------------------------------------------------------"
+echo "🔗 Pour voir les connections sur le serveur :"
+echo "  vagrant ssh vpn01"
+echo "  sudo ipsec status"
+

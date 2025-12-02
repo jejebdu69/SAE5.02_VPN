@@ -1,6 +1,6 @@
 vpn_server_ip: 192.168.56.10
 vpn_subnet: 10.10.0.0/24
-mode_auth: mschapv2           # rsa | psk | mschapv2
+mode_auth: mschapv2
 
 client_leftid: vpn-client
 vpn_leftid: vpn-server
