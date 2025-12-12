@@ -108,6 +108,17 @@ Le script lance automatiquement :
 vagrant up
 ```
 
+**Note : ** Si les machine n'existe pas elle vont être crée
+
+Ensuite les playbooks sont lancé sur chaque machines 
+
+```
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_vpn.yml
+```
+```
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_client.yml
+```
+
 ### ✔️ 2. Les certificats et secrets sont générés
 
 Selon le mode :
