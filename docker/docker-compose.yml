@@ -1,0 +1,29 @@
+networks:
+  vpn_net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.56.0/24
+
+services:
+  vpn01:
+    build: ./strongswan
+    container_name: vpn01
+    hostname: vpn01
+    privileged: true
+    networks:
+      vpn_net:
+        ipv4_address: 192.168.56.10
+    ports:
+      - "2222:22"
+
+  client01:
+    build: ./client
+    container_name: client01
+    hostname: client01
+    privileged: true
+    networks:
+      vpn_net:
+        ipv4_address: 192.168.56.11
+    ports:
+      - "2223:22"

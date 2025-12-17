@@ -1,6 +1,8 @@
---- 
-- name: Déploiement du client VPN StrongSwan 
+---
+- name: Déploiement du client VPN StrongSwan
   hosts: vpn_client
-  become: yes 
-  
-  roles: - client
+  become: yes
+  vars:
+    mode_auth: "{{ mode_auth | default('rsa') }}"
+  roles:
+    - role: client

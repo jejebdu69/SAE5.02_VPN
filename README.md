@@ -6,7 +6,7 @@ Ce projet met en place un **environnement de test complet pour VPN IPsec/IKEv2**
 * **RSA** — Certificats
 * **EAP-MSCHAPv2** — Identifiant / mot de passe
 
-L’ensemble du laboratoire est automatisé grâce à **Vagrant**, **Ansible**, et plusieurs scripts Bash.
+L’ensemble du laboratoire est automatisé grâce à **Docker**, **Vagrant**, **Ansible**, et plusieurs scripts Bash.
 
 Deux machines virtuelles sont utilisées :
 
@@ -24,7 +24,7 @@ Cet environnement permet de tester rapidement différentes configurations, d’a
         client01                   vpn01
 ```
 
-* VM créées automatiquement avec Vagrant
+* VM créées automatiquement avec Vagrant ou Docker
 * Configuration réseau, firewall, certificats et StrongSwan appliqués via Ansible
 * Possibilité de reconfigurer à chaud un mode VPN sans recréer les machines
 
@@ -60,7 +60,7 @@ Chaque mode possède ses propres templates Jinja et tâches Ansible, se substitu
 
 ```
 SAE5.02_VPN/
-├── Vagrantfile
+├── Vagrantfile		  # Déploiement VM Vagrant
 ├── config_menu.sh        # Menu principal interactif
 ├── ansible/
 │   ├── inventory/
@@ -70,10 +70,11 @@ SAE5.02_VPN/
 │   │   └── network/
 │   │   └── openssl/
 │   │   └── strongswan/
+│   └── docker /	  # Déploiement image Dockerfile 
+│   │   └── client/
+│   │   └── strongswan/
 └── scripts/
-    ├── manage/           # start, stop, reset, destroy
-    ├── setup/            # install, setup certs, setup network
-    └── logs/             # collecte & visualisation des logs
+    └── manage/           # start, stop, reset, destroy
 ```
 
 ---
@@ -108,7 +109,7 @@ Le script lance automatiquement :
 vagrant up
 ```
 
-**Note : ** Si les machine n'existe pas elle vont être crée
+>**Note :** Si les machines n'existe pas elle vont être crées
 
 Ensuite les playbooks sont lancé sur chaque machines 
 
