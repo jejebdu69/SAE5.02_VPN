@@ -1,3 +1,5 @@
+---
+
 # 🛡️ SAE 5.02 — Laboratoire VPN StrongSwan automatisé
 
 Ce projet met en place un **environnement de test complet pour VPN IPsec/IKEv2** basé sur **StrongSwan**, permettant d’expérimenter et comparer trois modes d’authentification :
@@ -49,8 +51,7 @@ Cet environnement permet de tester rapidement différentes configurations, d’a
 
 * Login + mot de passe
 * Nécessite un certificat uniquement côté serveur
-
-Le client peut etre compatible Windows, Linux, Android
+* Le client peut être compatible Windows, Linux, Android
 
 Chaque mode possède ses propres templates Jinja et tâches Ansible, se substituant dynamiquement lors du choix dans le menu.
 
@@ -66,15 +67,15 @@ SAE5.02_VPN/
 │   ├── inventory/
 │   ├── playbooks/        # Déploiement serveur & client
 │   └── roles/            # strongswan, client, openssl, network
-│   │   └── client/
-│   │   └── network/
-│   │   └── openssl/
-│   │   └── strongswan/
-│   └── docker /	  # Déploiement image Dockerfile 
-│   │   └── client/
-│   │   └── strongswan/
+│       └── client/
+│       └── network/
+│       └── openssl/
+│       └── strongswan/
+│   └── docker/           # Déploiement image Dockerfile 
+│       └── client/
+│       └── strongswan/
 └── scripts/
-    └── manage/           # start, stop, reset, destroy
+    └── manage/           # start, stop, reset, destroy (Vagrant & Docker)
 ```
 
 ---
@@ -88,9 +89,11 @@ Il propose un menu interactif permettant de :
 1  Configurer mode : PSK
 2  Configurer mode : RSA
 3  Configurer mode : MSCHAPv2
-4  Supprimer le lab (destroy_lab.sh)
-5  Allumer les machines (vagrant up)
-6  Éteindre les machines (vagrant halt)
+4  Supprimer le lab Vagrant (destroy_lab.sh)
+5  Démarrer le lab Vagrant (start_lab.sh)
+6  Supprimer le lab Docker (destroy_lab_docker.sh)
+7  Démarrer le lab Docker (start_lab_docker.sh)
+8  Quitter
 ```
 
 ---
@@ -101,58 +104,20 @@ Il propose un menu interactif permettant de :
 
 Lorsqu’un mode est sélectionné :
 
-### ✔️ 1. Les machines sont créées si elles n’existent pas
-
-Le script lance automatiquement :
+* **Seuls les fichiers YAML sont modifiés** pour définir le mode (`mode_auth`) côté serveur et client :
 
 ```
-vagrant up
+ansible/roles/strongswan/vars/main.yml
+ansible/roles/client/vars/main.yml
 ```
 
->**Note :** Si les machines n'existe pas elle vont être crées
+* Aucun déploiement Vagrant ou Ansible n’est effectué automatiquement à ce stade.
 
-Ensuite les playbooks sont lancé sur chaque machines 
-
-```
-ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_vpn.yml
-```
-```
-ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_client.yml
-```
-
-### ✔️ 2. Les certificats et secrets sont générés
-
-Selon le mode :
-
-* RSA → CA + cert client/serveur
-* PSK → clé partagée
-* EAP → user/password + cert serveur
-
-### ✔️ 3. Les fichiers StrongSwan sont générés dynamiquement
-
-* ipsec.conf
-* ipsec.secrets
-* strongswan.conf
-
-Les templates correspondants sont rendus via Ansible.
-
-### ✔️ 4. Ansible configure les deux machines
-
-* installation StrongSwan
-* règles réseau / NAT
-* déploiement des certificats
-* configuration du serveur et du client
-* redémarrage du service
-
-### ✔️ 5. Le mode est immédiatement opérationnel
-
-Sans recréer l’environnement complet.
+> **Note :** Les modifications seront prises en compte lorsque le lab sera démarré via l’option `5` (Vagrant) ou `7` (Docker).
 
 ---
 
-## 🧹 4 — Supprimer complètement le laboratoire
-
-Lance :
+## 🧹 4 — Supprimer complètement le laboratoire Vagrant
 
 ```
 scripts/manage/destroy_lab.sh
@@ -166,23 +131,49 @@ Ce script :
 
 ---
 
-## 🟢 5 — Allumer les machines
+## 🟢 5 — Démarrer le laboratoire Vagrant
 
-Equivalent à :
+* Lance les machines Vagrant :
 
 ```
 vagrant up
 ```
 
+* Déploie ensuite le VPN sur serveur et client via Ansible playbooks :
+
+```
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_vpn.yml
+ansible-playbook -i ansible/inventory/hosts.ini ansible/playbooks/deploy_client.yml
+```
+
 ---
 
-## 🔴 6 — Éteindre les machines
-
-Equivalent à :
+## 🧹 6 — Supprimer le laboratoire Docker
 
 ```
-vagrant halt
+scripts/manage/destroy_lab_docker.sh
 ```
+
+* Supprime les conteneurs et configurations Docker
+* Remet l’environnement Docker dans un état propre
+
+---
+
+## 🔴 7 — Démarrer le laboratoire Docker
+
+* Lance l’environnement Docker
+* Déploie le VPN via les playbooks avec l’inventaire Docker :
+
+```
+ansible-playbook -i ansible/inventory/hosts_docker.ini ansible/playbooks/deploy_vpn.yml
+ansible-playbook -i ansible/inventory/hosts_docker.ini ansible/playbooks/deploy_client.yml
+```
+
+---
+
+## 🔴 8 — Quitter le menu
+
+Ferme le menu et quitte le script.
 
 ---
 
@@ -194,20 +185,29 @@ vagrant halt
 ./config_menu.sh
 ```
 
-### 2. Choisir un mode VPN
+### 2. Choisir un mode VPN ou une action Docker/Vagrant
 
-Par exemple : `PSK`
+Exemple : `1` pour configurer le mode PSK, `5` pour démarrer Vagrant, ou `7` pour Docker.
 
 ### 3. Attendre la configuration automatique
 
-Toutes les étapes sont gérées (VM, certs, config, services…).
+* Pour Vagrant : playbooks appliqués automatiquement après `vagrant up`.
+* Pour Docker : playbooks appliqués automatiquement lors du démarrage du lab Docker.
 
-### 4. Tester la connexion depuis le client
+### 4. Tester la connexion depuis le client Vagrant
 
 ```
 vagrant ssh client01
 sudo ipsec up vpn
 sudo ipsec status
+```
+
+### 5. Tester la connexion depuis le client Docker
+
+```
+docker exec -it client01 bash
+ipsec up vpn
+ipsec status
 ```
 
 ---
@@ -223,3 +223,5 @@ Ce projet permet :
 * d’automatiser entièrement les configurations avancées
 
 Il constitue un outil de test robuste pour la cybersécurité réseau.
+
+---
