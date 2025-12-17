@@ -1,6 +1,6 @@
 vpn_subnet: 0.0.0.0/0
 vpn_interface: eth0
-mode_auth: mschapv2
+mode_auth: rsa
 
 vpn_leftid: vpn-server
 rightid: vpn-client

@@ -1,5 +1,3 @@
----
-
 # 🛡️ SAE 5.02 — Laboratoire VPN StrongSwan automatisé
 
 Ce projet met en place un **environnement de test complet pour VPN IPsec/IKEv2** basé sur **StrongSwan**, permettant d’expérimenter et comparer trois modes d’authentification :
